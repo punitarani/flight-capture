@@ -1,0 +1,14 @@
+{
+  "location": {
+    "latitude": 0,
+    "longitude": 0,
+    "altitude": 0
+  },
+  "opensky": {
+    "username": "",
+    "password": ""
+  },
+  "streamlit": {
+    "mapbox_token": ""
+  }
+}
