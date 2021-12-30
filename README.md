@@ -22,7 +22,7 @@
 
 **Download dependencies and required libraries**
 
-1. **pip** 
+1. **Install pip** 
 
 `sudo apt-get install python-pip`
 
@@ -32,8 +32,11 @@
 
 `pip install -r requirements.txt`
 
-3. **Run necessary scripts**:
-    `python scripts/setup.py`
+#### OR
+ 
+**Run setup.py**:
+
+`python setup.py`
 
 ## Usage
 **Run the following command to run app**
