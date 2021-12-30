@@ -117,4 +117,4 @@ dmypy.json
 .idea/
 
 # config files
-/config/
+config/config.json
