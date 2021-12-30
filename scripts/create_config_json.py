@@ -47,6 +47,11 @@ def create_config_json(overwrite: bool = False) -> dict:
             section = template[section_name]
             section_data = {}
 
+            #
+            if section_name == "location":
+                print("\nEnter 'home' coordinates:")
+                print("Can be found at https://gps-coordinates.org/")
+
             # Iterate through fields in section
             for field in section.keys():
                 # Get user input
