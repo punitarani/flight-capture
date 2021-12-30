@@ -19,6 +19,9 @@ with open(CONFIG_PATH, 'r') as config_file:
     opensky_username = config_data['opensky']['username']
     opensky_password = config_data['opensky']['password']
 
+    # MapBox
+    mapbox_token = config_data['streamlit']['mapbox_token']
+
 
 if __name__ == '__main__':
     print(latitude)
@@ -26,3 +29,4 @@ if __name__ == '__main__':
     print(altitude)
     print(opensky_username)
     print(opensky_password)
+    print(mapbox_token)
