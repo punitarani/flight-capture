@@ -32,8 +32,11 @@
 
 `pip install -r requirements.txt`
 
+3. **Run necessary scripts**:
+    `python scripts/setup.py`
+
 ## Usage
-**Run the script from the command line**
+**Run the following command to run app**
 
 `streamlit run main.py`
 
