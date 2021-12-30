@@ -32,22 +32,32 @@ logger.addHandler(logging.NullHandler())
 
 
 class StateVector(object):
-    """ Represents the state of a vehicle at a particular time. It has the following fields: |  **icao24** - ICAO24
-    address of the transmitter in hex string representation. |  **callsign** - callsign of the vehicle. Can be None
-    if no callsign has been received. |  **origin_country** - inferred through the ICAO24 address |
-    **time_position** - seconds since epoch of last position report. Can be None if there was no position report
-    received by OpenSky within 15s before. |  **last_contact** - seconds since epoch of last received message from
-    this transponder |  **longitude** - in ellipsoidal coordinates (WGS-84) and degrees. Can be None |  **latitude**
-    - in ellipsoidal coordinates (WGS-84) and degrees. Can be None |  **geo_altitude** - geometric altitude in
-    meters. Can be None |  **on_ground** - true if aircraft is on ground (sends ADS-B surface position reports). |
-    **velocity** - over ground in m/s. Can be None if information not present |  **heading** - in decimal degrees (0
-    is north). Can be None if information not present. |  **vertical_rate** - in m/s, incline is positive,
-    decline negative. Can be None if information not present. |  **sensors** - serial numbers of sensors which
-    received messages from the vehicle within the validity period of this state vector. Can be None if no filtering
-    for sensor has been requested. |  **baro_altitude** - barometric altitude in meters. Can be None |  **squawk** -
-    transponder code aka Squawk. Can be None |  **spi** - special purpose indicator |  **position_source** - origin
-    of this state's position: 0 = ADS-B, 1 = ASTERIX, 2 = MLAT, 3 = FLARM
     """
+    Represents the state of a vehicle at a particular time.
+
+    StateVector Output Dictionary Fields
+        icao24          - ICAO24 address of the transmitter in hex string representation.
+        callsign        - callsign of the vehicle. Can be None if no callsign has been received.
+        origin_Country  - inferred through the ICAO24 address
+        time_position   - seconds since epoch of last position report. Can be None if there was no position report
+                            received by OpenSky within 15s before.
+        last_contact    - seconds since epoch of last received message from this transponder
+        longitude       - in ellipsoidal coordinates (WGS-84) and degrees. Can be None
+        latitude        - in ellipsoidal coordinates (WGS-84) and degrees. Can be None
+        geo_altitude    - geometric altitude in meters. Can be None
+        on_ground       - true if aircraft is on ground (sends ADS-B surface position reports).
+        velocity        - over ground in m/s. Can be None if information not present
+        heading         - in decimal degrees (0 is north). Can be None if information not present
+        vertical_rate   - in m/s, incline is positive, decline negative. Can be None if information not present
+        sensors         - serial numbers of sensors which received messages from the vehicle within the validity period
+                            of this state vector. Can be None if no filtering for sensor has been requested.
+        baro_altitude   - barometric altitude in meters. Can be None
+        squawk          - transponder code aka Squawk. Can be None
+        spi             - special purpose indicator
+        position_source - origin of this state's position: 0 = ADS-B, 1 = ASTERIX, 2 = MLAT, 3 = FLARM
+                  
+    """
+
     keys = ["icao24", "callsign", "origin_country", "time_position",
             "last_contact", "longitude", "latitude", "baro_altitude", "on_ground",
             "velocity", "heading", "vertical_rate", "sensors",
@@ -56,7 +66,10 @@ class StateVector(object):
     # We are not using namedtuple here as state vectors from the server might be extended; zip() will ignore additional
     #  entries in this case
     def __init__(self, arr):
-        """ arr is the array representation of a state vector as received by the API """
+        """
+        :param arr: array representation of a state vector as received by the API
+        """
+
         self.__dict__ = dict(zip(StateVector.keys, arr))
 
     def __repr__(self):
@@ -67,11 +80,15 @@ class StateVector(object):
 
 
 class OpenSkyStates(object):
-    """ Represents the state of the airspace as seen by OpenSky at a particular time. It has the following fields: |
-    **time** - in seconds since epoch (Unix time stamp). Gives the validity period of all states. All vectors
-    represent the state of a vehicle with the interval :math:`[time - 1, time]`. |  **states** - a list of
-    `StateVector` or is None if there have been no states received
     """
+    Represents the state of the airspace as seen by OpenSky at a particular time.
+
+    Output dict fields:
+    time    - in seconds since epoch (Unix time stamp). Gives the validity period of all states. All vectors
+                represent the state of a vehicle with the interval :math:`[time - 1, time]`.
+    states  - list of `StateVector` or is None if there have been no states received
+    """
+
     def __init__(self, j):
         self.__dict__ = j
         if self.states is not None:
@@ -91,8 +108,10 @@ class OpenSkyApi(object):
     Main class of the OpenSky Network API. Instances retrieve data from OpenSky via HTTP
     """
     def __init__(self, username=None, password=None):
-        """ Create an instance of the API client. If you do not provide username and password requests will be
-        anonymous which imposes some limitations.
+        """
+        Create an instance of the API client. If you do not provide username and password requests will be anonymous,
+        which imposes some limitations.
+
         :param username: an OpenSky username (optional)
         :param password: an OpenSky password for the given username (optional)
         """
@@ -114,7 +133,9 @@ class OpenSkyApi(object):
         return None
 
     def _check_rate_limit(self, time_diff_noauth, time_diff_auth, func):
-        """ impose client-side rate limit
+        """
+        Impose client-side rate limit
+
         :param time_diff_noauth: the minimum time between two requests in seconds if not using authentication
         :param time_diff_auth: the minimum time between two requests in seconds if using authentication
         :param func: the API function to evaluate
@@ -135,12 +156,16 @@ class OpenSkyApi(object):
             raise ValueError("Invalid longitude {:f}! Must be in [-180, 180]".format(lon))
 
     def get_states(self, time_secs=0, icao24=None, serials=None, bbox=()):
-        """ Retrieve state vectors for a given time. If time = 0 the most recent ones are taken. Optional filters may
-        be applied for ICAO24 addresses. :param time_secs: time as Unix time stamp (seconds since epoch) or datetime.
-        The datetime must be in UTC! :param icao24: optionally retrieve only state vectors for the given ICAO24
-        address(es). The parameter can either be a single address as str or an array of str containing multiple
-        addresses :param bbox: optionally retrieve state vectors within a bounding box. The bbox must be a tuple of
-        exactly four values [min_latitude, max_latitude, min_longitude, max_latitude] each in WGS84 decimal degrees.
+        """
+        Retrieve state vectors for a given time. If time = 0 the most recent ones are taken.
+        Optional filters may be applied for ICAO24 addresses.
+
+        :param time_secs: time as Unix time stamp (seconds since epoch) or datetime.
+                            The datetime must be in UTC!
+        :param icao24: optionally retrieve only state vectors for the given ICAO24 address(es).
+                        The parameter can either be a single address str or a str array containing multiple addresses
+        :param bbox: optionally retrieve state vectors within a bounding box. The bbox must be a tuple of exactly four
+                        values [min_latitude, max_latitude, min_longitude, max_latitude] each in WGS84 decimal degrees.
         :return: OpenSkyStates if request was successful, None otherwise
         """
         if not self._check_rate_limit(10, 5, self.get_states):
@@ -173,15 +198,20 @@ class OpenSkyApi(object):
         return None
 
     def get_my_states(self, time_secs=0, icao24=None, serials=None):
-        """ Retrieve state vectors for your own sensors. Authentication is required for this operation. If time = 0
-        the most recent ones are taken. Optional filters may be applied for ICAO24 addresses and sensor serial
-        numbers. :param time_secs: time as Unix time stamp (seconds since epoch) or datetime. The datetime must be in
-        UTC! :param icao24: optionally retrieve only state vectors for the given ICAO24 address(es). The parameter
-        can either be a single address as str or an array of str containing multiple addresses :param serials:
-        optionally retrieve only states of vehicles as seen by the given sensor(s). The parameter can either be a
-        single sensor serial number (int) or a list of serial numbers. :return: OpenSkyStates if request was
-        successful, None otherwise
         """
+        Retrieve state vectors for your own sensors. Authentication is required for this operation.
+        If time = 0, the most recent ones are taken. Optional filters may be applied for ICAO24 addresses and
+        sensor serial numbers.
+
+        :param time_secs: time as Unix time stamp (seconds since epoch) or datetime. The datetime must be in  UTC!
+        :param icao24: optionally retrieve only state vectors for the given ICAO24 address(es). The parameter
+                        can either be a single address as str or an array of str containing multiple addresses
+        :param serials: optionally retrieve only states of vehicles as seen by the given sensor(s).
+                        The parameter can either be a single sensor serial number (int) or a list of serial numbers.
+
+        :return: OpenSkyStates if request was successful, None otherwise
+        """
+
         if len(self._auth) < 2:
             raise Exception("No username and password provided for get_my_states!")
         if not self._check_rate_limit(0, 1, self.get_my_states):
