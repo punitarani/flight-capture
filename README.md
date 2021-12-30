@@ -26,15 +26,15 @@
 
 `sudo apt-get install python-pip`
 
-2. **Install libraries**. First, `cd` to the project root.
+`cd` to the project root before moving forward.
 
 *Default: `cd flight-capture`*
 
+2. **Manually Install libraries (optional)**. 
+
 `pip install -r requirements.txt`
 
-#### OR
- 
-**Run setup.py**:
+3. **Run setup.py**:
 
 `python setup.py`
 
