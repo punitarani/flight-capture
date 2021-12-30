@@ -24,9 +24,9 @@ with open(CONFIG_PATH, 'r') as config_file:
 
 
 if __name__ == '__main__':
-    print(latitude)
-    print(longitude)
-    print(altitude)
-    print(opensky_username)
-    print(opensky_password)
-    print(mapbox_token)
+    print("latitude:            ", latitude)
+    print("longitude:           ", longitude)
+    print("altitude:            ", altitude)
+    print("opensky_username:    ", opensky_username)
+    print("opensky_password:    ", opensky_password)
+    print("mapbox_token:        ", mapbox_token)
