@@ -11,9 +11,9 @@ with open(CONFIG_PATH, 'r') as config_file:
     config_data = json.load(config_file)
 
     # Location
-    latitude = config_data['location']['latitude']
-    longitude = config_data['location']['longitude']
-    altitude = config_data['location']['altitude']
+    latitude = float(config_data['location']['latitude'])
+    longitude = float(config_data['location']['longitude'])
+    altitude = float(config_data['location']['altitude'])
 
     # OpenSky
     opensky_username = config_data['opensky']['username']
