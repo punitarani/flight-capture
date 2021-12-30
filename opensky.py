@@ -3,11 +3,12 @@
 import calendar
 import logging
 import pprint
-import requests
-
-from datetime import datetime
-from collections import defaultdict
 import time
+from collections import defaultdict
+from datetime import datetime
+
+import pandas as pd
+import requests
 
 logger = logging.getLogger('opensky')
 logger.addHandler(logging.NullHandler())
@@ -89,6 +90,7 @@ class OpenSkyApi(object):
     """
     Main class of the OpenSky Network API. Instances retrieve data from OpenSky via HTTP
     """
+
     def __init__(self, username=None, password=None):
         """
         Create an instance of the API client. If you do not provide username and password requests will be anonymous,
@@ -204,7 +206,56 @@ class OpenSkyApi(object):
             t = calendar.timegm(t.timetuple())
         states_json = self._get_json("/states/own", self.get_my_states,
                                      params={"time": int(t), "icao24": icao24,
-                                                             "serials": serials})
+                                             "serials": serials})
         if states_json is not None:
             return OpenSkyStates(states_json)
         return None
+
+    def get_states_df(self, bbox: tuple = ()) -> pd.DataFrame | None:
+        """
+        Retrieve flight data as pandas dataframe.
+        """
+
+        states = self.get_states(bbox=bbox).states
+
+        if states is None:
+            return None
+
+        else:
+            cols = ["icao24", "callsign", "origin_country", "time_position",
+                    "last_contact", "longitude", "latitude", "baro_altitude", "on_ground",
+                    "velocity", "heading", "vertical_rate", "sensors",
+                    "geo_altitude", "squawk", "spi", "position_source"]
+
+            # create dataframe
+            df = pd.DataFrame(columns=cols)
+
+            for state in states:
+                # Get the state data for each aircraft
+                row = {
+                    "icao24": state.icao24,
+                    "callsign": state.callsign,
+                    "origin_country": state.origin_country,
+                    "time_position": state.time_position,
+                    "last_contact": state.last_contact,
+                    "longitude": state.longitude,
+                    "latitude": state.latitude,
+                    "baro_altitude": state.baro_altitude,
+                    "on_ground": state.on_ground,
+                    "velocity": state.velocity,
+                    "heading": state.heading,
+                    "vertical_rate": state.vertical_rate,
+                    "sensors": state.sensors,
+                    "geo_altitude": state.geo_altitude,
+                    "squawk": state.squawk,
+                    "spi": state.spi,
+                    "position_source": state.position_source
+                }
+
+                # Append the row to the dataframe
+                df = df.append(row, ignore_index=True)
+
+            # Set the index to the icao24 column
+            df.set_index("icao24", inplace=True)
+
+            return df
