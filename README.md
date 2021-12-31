@@ -24,7 +24,7 @@
 
 1. **Install pip** 
 
-`sudo apt-get install python-pip`
+`sudo apt-get install python3-pip`
 
 `cd` to the project root before moving forward.
 
@@ -37,6 +37,8 @@
 3. **Run setup.py**:
 
 `python setup.py`
+
+***Note:** pip installation can be really slow sometimes.*
 
 ## Usage
 **Run the following command to run app**
@@ -53,7 +55,7 @@ You can now view your Streamlit app in your browser.
 
 Local URL: http://localhost:8501
 
-Network URL: http://RaspberryPi.IP:8501
+Network URL: http://{RaspberryPi.IP}:8501
 
 ```
 *You can view the live status of the system with the **Network URL**.*
