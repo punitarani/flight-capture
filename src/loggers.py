@@ -1,9 +1,10 @@
 # Configuring all Loggers
 
-import sys
-from defs import SYSTEM_LOG
 import logging
+import sys
+from pathlib import Path
 
+from defs import SYSTEM_LOG
 
 # Dict of all instantiated loggers
 loggers = {}
@@ -38,6 +39,10 @@ class SystemLogger:
             self.stream_handler = logging.StreamHandler(sys.stdout)
             self.stream_handler.setFormatter(self.formatter)
 
+            # Create log file if it doesn't exist
+            if not Path(SYSTEM_LOG).is_file():
+                self.createLog()
+
             # Get logger
             self.logger = self.getLogger()
 
@@ -69,3 +74,10 @@ class SystemLogger:
             logger.addHandler(self.stream_handler)
 
         return logger
+
+    @staticmethod
+    def createLog():
+        """
+        Create log file
+        """
+        Path(SYSTEM_LOG).touch()
