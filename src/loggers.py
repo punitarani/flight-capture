@@ -20,6 +20,10 @@ class SystemLogger:
         """
         self.logger_name = logger_name
 
+        # Create log file if it doesn't exist
+        if not Path(SYSTEM_LOG).is_file():
+            self.createLog()
+
         # If logger exists, return existing logger
         if loggers.get(self.logger_name):
             self.logger = loggers.get(self.logger_name)
@@ -38,10 +42,6 @@ class SystemLogger:
             self.file_handler.setFormatter(self.formatter)
             self.stream_handler = logging.StreamHandler(sys.stdout)
             self.stream_handler.setFormatter(self.formatter)
-
-            # Create log file if it doesn't exist
-            if not Path(SYSTEM_LOG).is_file():
-                self.createLog()
 
             # Get logger
             self.logger = self.getLogger()
@@ -80,4 +80,7 @@ class SystemLogger:
         """
         Create log file
         """
+        if not Path(SYSTEM_LOG).parent.exists():
+            Path(SYSTEM_LOG).parent.mkdir(parents=True)
+
         Path(SYSTEM_LOG).touch()
