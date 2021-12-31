@@ -31,8 +31,8 @@ def create_files_folders():
         if folder.exists():
             logger.info(f"Folder {folder} already exists")
         else:
-            logger.info(f"Creating folder {folder}")
             folder.mkdir(parents=True)
+            logger.info(f"Created folder {folder}")
 
     """
     Create Files
@@ -49,8 +49,8 @@ def create_files_folders():
         if file.exists():
             logger.info(f"File {file} already exists")
         else:
-            logger.info(f"Creating file {file}")
             file.touch()
+            logger.info(f"Created file {file}")
 
 
 if __name__ == "__main__":
